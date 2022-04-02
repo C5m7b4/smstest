@@ -7,33 +7,36 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import Loader from './Loader';
+import { testLogin } from '../api/api';
 
 const Home = () => {
-  const [ip, setIp] = useState('192.168.0.19');
+  // const [ip, setIp] = useState('192.168.0.19');
+  const [ip, setIp] = useState('10.0.0.34');
   const [res, setRes] = useState('');
   const [username, setUsername] = useState('4444');
   const [password, setPassword] = useState('123456');
   const [error, setError] = useState('');
   const [port, setPort] = useState('8083');
+  const [isLoading, setIsLoading] = useState(false);
 
   const login = () => {
-    const url = `http://${ip}:${port}/scripts/trs.exe?fct=10010&entry=${username}&password=${password}&dn=fm`;
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        format(JSON.stringify(data));
-        setError('');
+    setIsLoading(true);
+    testLogin(ip, port, username, password)
+      .then((res) => {
+        setIsLoading(false);
+        const j = res.data;
+        if (j.error === 0) {
+          setRes(JSON.stringify(j));
+        } else {
+          setError(JSON.stringify(j));
+        }
       })
       .catch((err) => {
+        setIsLoading(false);
         setError(JSON.stringify(err));
         setRes('');
       });
-  };
-
-  const format = (data) => {
-    const args = data.split(',');
-    const result = args.map((a) => a).join('\n');
-    setRes(result);
   };
 
   return (
@@ -41,6 +44,7 @@ const Home = () => {
       style={styles.container}
       contentContainerStyle={{ alignItems: 'center' }}
     >
+      <Loader loading={isLoading} label={'Loading data...'} />
       <Text style={styles.text}>SMS Test</Text>
       <View style={styles.view}>
         <TextInput
