@@ -6,13 +6,15 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Platform,
 } from 'react-native';
 import Loader from './Loader';
 import { testLogin } from '../api/api';
 
+const baseUrl = Platform.OS === 'ios' ? '10.0.0.34' : '192.168.0.19';
+
 const Home = () => {
-  // const [ip, setIp] = useState('192.168.0.19');
-  const [ip, setIp] = useState('10.0.0.34');
+  const [ip, setIp] = useState(baseUrl);
   const [res, setRes] = useState('');
   const [username, setUsername] = useState('4444');
   const [password, setPassword] = useState('123456');
