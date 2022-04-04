@@ -11,7 +11,7 @@ import {
 import Loader from './Loader';
 import { testLogin } from '../api/api';
 
-const baseUrl = Platform.OS === 'ios' ? '10.0.0.34' : '192.168.0.19';
+const baseUrl = Platform.OS === 'ios' ? '10.0.0.34' : '192.168.0.21';
 
 const Home = () => {
   const [ip, setIp] = useState(baseUrl);
@@ -23,15 +23,19 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const login = () => {
+    const url = `http://${ip}:${port}/scripts/trs.exe?fct=10010&entry=${username}&password=${password}&dn=Freshop`;
+
     setIsLoading(true);
-    testLogin(ip, port, username, password)
+    testLogin(url)
       .then((res) => {
         setIsLoading(false);
         const j = res.data;
         if (j.error === 0) {
           setRes(JSON.stringify(j));
+          setError('');
         } else {
           setError(JSON.stringify(j));
+          setRes('');
         }
       })
       .catch((err) => {
